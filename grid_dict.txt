@@ -1,0 +1,5 @@
+0 = Wall
+1 = Movable
+2 = Movable & Coin
+3 = Movable & Big_Coin
+4 = Ghost_Only
