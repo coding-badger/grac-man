@@ -78,17 +78,17 @@ class Level(object):
         self.surface = surface
         self.bg = img_bg
 
-        self.gridmap = []
-        self.gridmap_temp = []
+        self.gridmap = [[0 for j in range(COLS)]for i in range(ROWS)]
 
         with open('gridmap1.txt', 'r') as f:
             next(f)
             contents = f.read()
             lines = contents.split('\n')
-            for line in lines:
-                self.gridmap.append([int(e) for e in line.split(',')])
-                self.gridmap_temp.append([int(e) for e in line.split(',')])
-        f.close()
+            for i in range(len(self.gridmap[0])):
+                self.gridmap[i] = []
+                for line in lines:
+                    nline = [int(e) for e in line.split(',')]
+                    self.gridmap[i].append(nline[i])
 
     def generate(self):
         for i in range(len(self.gridmap)):
@@ -314,16 +314,16 @@ def save_layout(val): #saves changes to gridmap based on selected squares to spe
         i = game.squares.squares[cnt][0]
         j = game.squares.squares[cnt][1]
 
-        game.level.gridmap_temp[i][j] = val
+        game.level.gridmap[i][j] = val
         cnt += 1
     
     try:
-        with open('gridmap1temp.txt', 'w') as f:
-            for i in range(COLS):
+        with open('gridmap1.txt', 'w') as f:
+            for i in range(ROWS):
                 f.write('\n')
-                for j in range(ROWS):
-                    f.write(str(game.level.gridmap_temp[i][j])) # SAVED GRIDMAP FILES ARE ROTATED 90 degrees
-                    if j != ROWS-1:
+                for j in range(COLS):
+                    f.write(str(game.level.gridmap[j][i])) # SAVED GRIDMAP FILES ARE ROTATED 90 degrees
+                    if j != COLS-1:
                         f.write(",")
         f.close()
     except:print(f'{j} {i}')
