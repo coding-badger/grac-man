@@ -19,8 +19,11 @@ PURPLE = (255,0,255)
 
 squares = []
 img_coin = pygame.transform.smoothscale(pygame.image.load(os.path.join('assets','coin.png')), ((WIDTH/ROWS)-22,(WIDTH/ROWS)-22))
-img_gracman1 = pygame.transform.smoothscale(pygame.image.load(os.path.join('assets','gracman1.png')), ((WIDTH/ROWS),(WIDTH/ROWS)))
-img_gracman2 = pygame.transform.smoothscale(pygame.image.load(os.path.join('assets','gracman2.png')), ((WIDTH/ROWS),(WIDTH/ROWS)))
+
+OFFSET = 12
+img_gracman1 = pygame.transform.smoothscale(pygame.image.load(os.path.join('assets','gracman1.png')), ((WIDTH/ROWS) + OFFSET,(WIDTH/ROWS) + OFFSET))
+img_gracman2 = pygame.transform.smoothscale(pygame.image.load(os.path.join('assets','gracman2.png')), ((WIDTH/ROWS) + OFFSET,(WIDTH/ROWS) + OFFSET))
+
 img_bg = pygame.image.load(os.path.join('assets','background.png'))
 
 
@@ -263,30 +266,30 @@ class Player(object):
 
         if self.right:
             if self.img_count == 0 or self.img_count == 1:
-                WIN.blit(img_gracman1, (i*dis+1, j*dis+1, dis-1, dis-1))
+                WIN.blit(img_gracman1, (i*dis-(OFFSET/2), j*dis-(OFFSET/2), dis-(OFFSET/2), dis-(OFFSET/2)))
             elif self.img_count == 2 or self.img_count == 3:
-                WIN.blit(img_gracman2, (i*dis+1, j*dis+1, dis-1, dis-1))
+                WIN.blit(img_gracman2, (i*dis-(OFFSET/2), j*dis-(OFFSET/2), dis-(OFFSET/2), dis-(OFFSET/2)))
         if self.left:
             rot1 = pygame.transform.rotate(img_gracman1, 180)
             rot2 = pygame.transform.rotate(img_gracman2, 180)
             if self.img_count == 0 or self.img_count == 1:
-                WIN.blit(rot1, (i*dis+1, j*dis+1, dis-1, dis-1))
+                WIN.blit(rot1, (i*dis-(OFFSET/2), j*dis-(OFFSET/2), dis-(OFFSET/2), dis-(OFFSET/2)))
             elif self.img_count == 2 or self.img_count == 3:
-                WIN.blit(rot2, (i*dis+1, j*dis+1, dis-1, dis-1))
+                WIN.blit(rot2, (i*dis-(OFFSET/2), j*dis-(OFFSET/2), dis-(OFFSET/2), dis-(OFFSET/2)))
         if self.up:
             rot1 = pygame.transform.rotate(img_gracman1, 90)
             rot2 = pygame.transform.rotate(img_gracman2, 90)
             if self.img_count == 0 or self.img_count == 1:
-                WIN.blit(rot1, (i*dis+1, j*dis+1, dis-1, dis-1))
+                WIN.blit(rot1, (i*dis-(OFFSET/2), j*dis-(OFFSET/2), dis-(OFFSET/2), dis-(OFFSET/2)))
             elif self.img_count == 2 or self.img_count == 3:
-                WIN.blit(rot2, (i*dis+1, j*dis+1, dis-1, dis-1))
+                WIN.blit(rot2, (i*dis-(OFFSET/2), j*dis-(OFFSET/2), dis-(OFFSET/2), dis-(OFFSET/2)))
         if self.down:
             rot1 = pygame.transform.rotate(img_gracman1, 270)
             rot2 = pygame.transform.rotate(img_gracman2, 270)
             if self.img_count == 0 or self.img_count == 1:
-                WIN.blit(rot1, (i*dis+1, j*dis+1, dis-1, dis-1))
+                WIN.blit(rot1, (i*dis-(OFFSET/2), j*dis-(OFFSET/2), dis-(OFFSET/2), dis-(OFFSET/2)))
             elif self.img_count == 2 or self.img_count == 3:
-                WIN.blit(rot2, (i*dis+1, j*dis+1, dis-1, dis-1))                                                
+                WIN.blit(rot2, (i*dis-(OFFSET/2), j*dis-(OFFSET/2), dis-(OFFSET/2), dis-(OFFSET/2)))                                                
 
 
         self.img_count = self.img_count + 1
