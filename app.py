@@ -84,11 +84,11 @@ class Level(object):
             next(f)
             contents = f.read()
             lines = contents.split('\n')
-            for i in range(len(self.gridmap[0])):
-                self.gridmap[i] = []
+            for idx, num in enumerate(self.gridmap[0]): 
+                self.gridmap[idx] = []
                 for line in lines:
                     nline = [int(e) for e in line.split(',')]
-                    self.gridmap[i].append(nline[i])
+                    self.gridmap[idx].append(nline[idx])
 
     def generate(self):
         for i in range(len(self.gridmap)):
@@ -135,6 +135,10 @@ class Player(object):
         self.dirny = dirny
         self.color = color
         self.moving = moving
+        self.val_right = True
+        self.val_left = False
+        self.val_up = False
+        self.val_down = False
         self.img_count = 0
         self.left = False
         self.right = True
@@ -142,6 +146,10 @@ class Player(object):
         self.down = False
 
     def move(self):
+        i = self.pos
+        g = game.level.gridmap
+
+        self.val_move()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 print('Goodbye!\n')
@@ -153,7 +161,8 @@ class Player(object):
             keys = pygame.key.get_pressed()
 
             for key in keys:                        
-                if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+
+                if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and self.val_left:
                     self.dirnx = -1
                     self.dirny = 0
                     self.left = True
@@ -161,7 +170,7 @@ class Player(object):
                     self.up = False
                     self.down = False
 
-                if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+                if (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and self.val_right:
                     self.dirnx = 1
                     self.dirny = 0
                     self.left = False
@@ -169,7 +178,7 @@ class Player(object):
                     self.up = False
                     self.down = False
 
-                if keys[pygame.K_UP] or keys[pygame.K_w]:
+                if (keys[pygame.K_UP] or keys[pygame.K_w]) and self.val_up:
                     self.dirnx = 0
                     self.dirny = -1
                     self.left = False
@@ -177,7 +186,7 @@ class Player(object):
                     self.up = True
                     self.down = False
 
-                if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+                if (keys[pygame.K_DOWN] or keys[pygame.K_s]) and self.val_down:
                     self.dirnx = 0
                     self.dirny = 1
                     self.left = False
@@ -190,39 +199,59 @@ class Player(object):
         elif self.dirny == 1 and self.pos[1] >= ROWS-1: self.pos = (self.pos[0], -1)    #if traveling down      and reach bottom edge,      move cube to top edge
         elif self.dirny == -1 and self.pos[1] <= 0: self.pos = (self.pos[0], ROWS)      #if traveling up        and reach top edge          move cube to bottom edge
 
-        i = game.player.pos
         try:
         ###walls left###      
-            if game.level.gridmap[(i[0])-1][i[1]] == 0 and game.player.dirnx == -1:
-                game.player.moving = False
-            if game.level.gridmap[(i[0])-1][i[1]] != 0 and game.player.dirnx == -1:
-                game.player.moving = True
+            if self.left and g[(i[0])-1][i[1]] == 0:
+                self.moving = False
+            if self.left and g[(i[0])-1][i[1]] != 0:
+                self.moving = True
         ###walls right###
-            if game.level.gridmap[(i[0])+1][i[1]] == 0 and game.player.dirnx == 1:
-                game.player.moving = False
-            if game.level.gridmap[(i[0])+1][i[1]] != 0 and game.player.dirnx == 1:
-                game.player.moving = True
+            if self.right and g[(i[0])+1][i[1]] == 0:
+                self.moving = False
+            if self.right and g[(i[0])+1][i[1]] != 0:
+                self.moving = True
         ###walls up###
-            if game.level.gridmap[i[0]][(i[1])-1] == 0 and game.player.dirny == -1:
-                game.player.moving = False
-            if game.level.gridmap[i[0]][(i[1])-1] != 0 and game.player.dirny == -1:
-                game.player.moving = True
+            if self.up and g[i[0]][(i[1])-1] == 0:
+                self.moving = False
+            if self.up and g[i[0]][(i[1])-1] != 0:
+                self.moving = True
         ###walls down###
-            if game.level.gridmap[i[0]][(i[1])+1] == 0 and game.player.dirny == 1:
-                game.player.moving = False
-            if game.level.gridmap[i[0]][(i[1])+1] != 0 and game.player.dirny == 1:
-                game.player.moving = True
+            if self.down and g[i[0]][(i[1])+1] == 0:
+                self.moving = False
+            if self.down and g[i[0]][(i[1])+1] != 0:
+                self.moving = True
         except:pass
         ###coins###
         try:
-            if game.level.gridmap[i[0]][i[1]] == 2:
-                game.level.gridmap[i[0]][i[1]] = 1
+            if g[i[0]][i[1]] == 2:
+                g[i[0]][i[1]] = 1
                 game.score = game.score + 10
                 print(f'Score: {game.score}')
         except:pass
 
-        if self.moving == True:
+        if self.moving:
             self.pos = (self.pos[0] + self.dirnx, self.pos[1] + self.dirny) # add new position to existing position in order to move
+    
+    def val_move(self):
+        i = self.pos
+        g = game.level.gridmap
+        
+        if g[(i[0])-1][i[1]] == 0:
+            self.val_left = False
+        else:
+            self.val_left = True
+        if g[(i[0])+1][i[1]] == 0:
+            self.val_right = False
+        else:
+            self.val_right = True
+        if g[i[0]][(i[1])-1] == 0:
+            self.val_up = False
+        else:
+            self.val_up = True
+        if g[i[0]][(i[1])+1] == 0:
+            self.val_down = False
+        else:
+            self.val_down = True
 
     def draw(self):
         if self.img_count == 4:
@@ -344,5 +373,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-#fix movement so player doesn't stop moving forward when changing direction directly into wall
