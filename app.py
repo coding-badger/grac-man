@@ -1,6 +1,7 @@
 import sys, os
 import pygame
 from random import randrange
+from math import atan, cos, sin
 
 
 W, H = 896, 992
@@ -69,7 +70,7 @@ class Game(object):
         self.squares.draw()
         self.level.draw()
         self.player.draw()
-        #self.ghosts.draw()
+        self.ghosts.draw()
 
         pygame.display.update()    
 
@@ -307,31 +308,55 @@ class Ghost(object):
         self.i = 0
 
     def move(self):
-        if self.count >= 4:
-            self.i = randrange(4)
+        try:
+            gracman_X = game.player.pos[0]
+            gracman_Y = game.player.pos[1]
 
-        if self.i == 0:#left
-            self.dirnx = -1
-            self.dirny = 0
-        elif self.i == 1:#right
-            self.dirnx = 1
-            self.dirny = 0
-        elif self.i == 2:#up
-            self.dirnx = 0
-            self.dirny = -1
-        elif self.i == 3:#down
-            self.dirnx = 0
-            self.dirny = 1
+            #Find out the direction (angle) the Ghost needs to move towards
+            #Using SOH-CAH-TOA trignometic rations
+            opposite = gracman_Y - self.pos[1]
+            adjacent = gracman_X - self.pos[0]
+            angle = atan(opposite/adjacent)
+            if self.pos[0] > gracman_X:
+                angle += 180
+            
+            #Use this angle to calculate the velocity vector of the Ghost
+            #Once again using SOH-CAH-TOA trignometic rations
+            velocity = 0.5 #square per frame
+            
+            vx = velocity * cos(angle)
+            vy = velocity * sin(angle)
+            
+            #Apply velocity vector to the Ghost coordinates to move/translate the ghost
+            self.pos = (self.pos[0] + vx, self.pos[1] + vy)
+        except:print("except")
+
+        
+        # if self.count >= 4:
+        #     self.i = randrange(4)
+
+        # if self.i == 0:#left
+        #     self.dirnx = -1
+        #     self.dirny = 0
+        # elif self.i == 1:#right
+        #     self.dirnx = 1
+        #     self.dirny = 0
+        # elif self.i == 2:#up
+        #     self.dirnx = 0
+        #     self.dirny = -1
+        # elif self.i == 3:#down
+        #     self.dirnx = 0
+        #     self.dirny = 1
 
         if self.dirnx == -1 and self.pos[0] <= 0: self.pos = (ROWS, self.pos[1])
         elif self.dirnx == 1 and self.pos[0] >= ROWS-1: self.pos = (-1, self.pos[1])
         elif self.dirny == 1 and self.pos[1] >= ROWS-1: self.pos = (self.pos[0], -1)
         elif self.dirny == -1 and self.pos[1] <= 0: self.pos = (self.pos[0], ROWS)
 
-        self.pos = (self.pos[0] + self.dirnx, self.pos[1] + self.dirny)
-        self.count = self.count + 1
+        # self.pos = (self.pos[0] + self.dirnx, self.pos[1] + self.dirny)
+        # self.count = self.count + 1
     
-    def draw(self,):
+    def draw(self):
             dis = WIDTH // ROWS
             i = self.pos[0]
             j = self.pos[1]
